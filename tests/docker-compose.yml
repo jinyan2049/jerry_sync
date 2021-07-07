@@ -26,6 +26,6 @@ services:
       test: --health-cmd=pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
   clickhouse-jdbc-bridge:
     network_mode: host
-    image: long2ice/clickhouse-jdbc-bridge
+    image: jerry2048/clickhouse-jdbc-bridge
     environment:
       BRIDGE_BIND_HOST: 0.0.0.0

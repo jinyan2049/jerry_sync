@@ -1,18 +1,9 @@
-# Synch
-
-![pypi](https://img.shields.io/pypi/v/synch.svg?style=flat)
-![docker](https://img.shields.io/docker/cloud/build/long2ice/synch)
-![license](https://img.shields.io/github/license/long2ice/synch)
-![workflows](https://github.com/long2ice/synch/workflows/pypi/badge.svg)
-![workflows](https://github.com/long2ice/synch/workflows/ci/badge.svg)
-
-[English](https://github.com/long2ice/synch/blob/dev/README.md)
+# jerry_sync
 
 ## 简介
 
 从其他数据库同步到 ClickHouse，当前支持 MySQL 与 postgres，支持全量复制与增量复制。
 
-![synch](https://github.com/long2ice/synch/raw/dev/images/synch.png)
 
 ## 特性
 
@@ -29,46 +20,8 @@
 - Python >= 3.7
 - [redis](https://redis.io)，缓存 binlog 和作为消息队列，支持 redis 集群。
 - [kafka](https://kafka.apache.org)，使用 kafka 作为消息队列时需要。
-- [clickhouse-jdbc-bridge](https://github.com/long2ice/clickhouse-jdbc-bridge)， 在 postgres 执行`etl`命令的时候需要。
 - [sentry](https://github.com/getsentry/sentry)，可选的，提供错误报告。
 
-## 安装
-
-```shell
-> pip install synch
-```
-
-## 使用
-
-### 配置文件 `synch.yaml`
-
-synch 默认从 `./synch.yaml`读取配置， 或者可以使用`synch -c` 指定配置文件。
-
-参考配置文件 [`synch.yaml`](https://github.com/long2ice/synch/blob/dev/synch.yaml)。
-
-### 全量复制
-
-在增量复制之前一般需要进行一次全量复制，或者使用`--renew`进行全量重建。
-
-```shell
-> synch --alias mysql_db etl -h
-
-Usage: synch etl [OPTIONS]
-
-  Make etl from source table to ClickHouse.
-
-Options:
-  --schema TEXT     Schema to full etl.
-  --renew           Etl after try to drop the target tables.
-  -t, --table TEXT  Tables to full etl.
-  -h, --help        Show this message and exit.
-```
-
-全量复制表 `test.test`：
-
-```shell
-> synch --alias mysql_db etl --schema test --tables test
-```
 
 ### 生产
 
@@ -143,7 +96,7 @@ services:
   producer:
     depends_on:
       - redis
-    image: long2ice/synch
+    image: jerry2048
     command: synch --alias mysql_db produce
     volumes:
       - ./synch.yaml:/synch/synch.yaml
@@ -151,7 +104,7 @@ services:
   consumer.test:
     depends_on:
       - redis
-    image: long2ice/synch
+    image: jerry2048/jerry_sync
     command: synch --alias mysql_db consume --schema test
     volumes:
       - ./synch.yaml:/synch/synch.yaml
@@ -205,7 +158,7 @@ services:
       - redis
       - kafka
       - zookeeper
-    image: long2ice/synch
+    image: jerry2048
     command: synch --alias mysql_db produce
     volumes:
       - ./synch.yaml:/synch/synch.yaml
@@ -215,7 +168,7 @@ services:
       - redis
       - kafka
       - zookeeper
-    image: long2ice/synch
+    image: jerry2048/jerry_sync
     command: synch --alias mysql_db consume --schema test
     volumes:
       - ./synch.yaml:/synch/synch.yaml
@@ -238,26 +191,3 @@ volumes:
 - DDL 不支持 postgres.
 - Postgres 同步未经过大量测试，生产环境谨慎使用。
 
-## 支持这个项目
-
-### 支付宝
-
-<img width="200" src="https://github.com/long2ice/synch/raw/dev/images/alipay.jpeg"/>
-
-### 微信
-
-<img width="200" src="https://github.com/long2ice/synch/raw/dev/images/wechatpay.jpeg"/>
-
-### PayPal
-
-捐赠 [paypal](https://www.paypal.me/long2ice) 到我的账号 long2ice.
-
-## 感谢
-
-强大的 Python IDE [Pycharm](https://www.jetbrains.com/pycharm/?from=synch) ，来自 [Jetbrains](https://www.jetbrains.com/?from=synch)。
-
-![jetbrains](https://github.com/long2ice/synch/raw/dev/images/jetbrains.svg)
-
-## 开源许可
-
-本项目遵从 [Apache-2.0](https://github.com/long2ice/synch/blob/master/LICENSE) 开源许可。

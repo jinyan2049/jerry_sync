@@ -34,7 +34,7 @@ services:
       - redis
       - kafka
       - zookeeper
-    image: long2ice/synch
+    image: jerry2048/jerry_sync
     command: synch --alias mysql_db produce
     volumes:
       - ./synch.yaml:/synch/synch.yaml
@@ -45,10 +45,10 @@ services:
       - redis
       - kafka
       - zookeeper
-    image: long2ice/synch
-    command: synch --alias mysql_db consume --schema test
+    image: jerry2048/jerry_sync
+    command: synch --alias mysql_db consume --schema trade --skip-error
     volumes:
-      - ./synch.yaml:/synch/synch.yaml
+      - ./synch.yaml:/jerry_sync/synch.yaml
   redis:
     image: redis:latest
     volumes:

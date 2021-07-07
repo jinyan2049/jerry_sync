@@ -1,9 +1,9 @@
 core:
   debug: true # when set True, will display sql information.
-  insert_num: 1 # how many num to submit,recommend set 20000 when production
-  insert_interval: 1 # how many seconds to submit,recommend set 60 when production
+  insert_num: 20000 # how many num to submit,recommend set 20000 when production
+  insert_interval: 60 # how many seconds to submit,recommend set 60 when production
   # enable this will auto create database `synch` in ClickHouse and insert monitor data
-  monitoring: true
+  monitoring: false
 
 sentry:
   environment: development
@@ -26,39 +26,171 @@ redis:
 source_dbs:
   - db_type: mysql
     alias: mysql_db # must be unique
-    broker_type: redis # current support redis and kafka
-    server_id: 1
-    host: mysql
+    broker_type: kafka # current support redis and kafka
+    server_id: 10630301
+    host: 10.63.0.252
     port: 3306
-    user: root
-    password: "123456"
+    user: sync
+    password: "aabb1122"
     # optional, auto get from `show master status` when empty
-    init_binlog_file:
+    init_binlog_file: mysql-bin.020379
     # optional, auto get from `show master status` when empty
-    init_binlog_pos:
+    init_binlog_pos: 176706290
     skip_dmls: # dmls to skip
     skip_delete_tables: # tables skip delete, format with schema.table
     skip_update_tables: # tables skip update, format with schema.table
     databases:
-      - database: synch_mysql_test
+      - database: trade
         # optional, default true, auto create database when database in clickhouse not exists
         auto_create: true
         tables:
-          - table: test
+          - table: Accounts
             # optional, default false, if your table has decimal column with nullable, there is a bug with full data etl will, see https://github.com/ClickHouse/ClickHouse/issues/7690.
-            skip_decimal: false # set it true will replace decimal with string type.
+            skip_decimal: true # set it true will replace decimal with string type.
             # optional, default true
             auto_full_etl: true # auto do full etl at first when table not exists
             # optional, default ReplacingMergeTree
             clickhouse_engine: ReplacingMergeTree # current support MergeTree, CollapsingMergeTree, VersionedCollapsingMergeTree, ReplacingMergeTree
-            # optional
-            partition_by: # Table create partitioning by, like toYYYYMM(created_at).
-            # optional
             settings: # Table create settings, like index_granularity=8192
-            # optional
             sign_column: sign # need when clickhouse_engine=CollapsingMergeTree and VersionedCollapsingMergeTree, no need real in source db, will auto generate in clickhouse
-            # optional
-            version_column: # need when clickhouse_engine=VersionedCollapsingMergeTree and ReplacingMergeTree(optional), need real in source db, usually is `updated_at` with auto update.
+            version_column: updatedAt
+          - table: account_preapprove_result
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: MergeTree
+            version_column: updated_at
+          - table: AccountTags
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: ReplacingMergeTree
+            version_column: updatedAt
+          - table: BorrowOrders
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: ReplacingMergeTree
+            version_column: updatedAt
+          - table: BasicDataOptions
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: MergeTree
+          - table: Certificates
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: MergeTree
+          - table: LoanApprovalHistories
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: MergeTree
+            version_column: updatedAt
+          - table: CF_BorrowOrders
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: MergeTree
+            version_column: updatedAt
+          - table: Cards
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: MergeTree
+            version_column: updatedAt
+          - table: DownPayments
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: MergeTree
+            version_column: updatedAt
+          - table: EditableProperty
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: MergeTree
+            version_column: updatedAt
+          - table: InstallmentDetails
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: MergeTree
+            version_column: updatedAt
+          - table: InvestOrders
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: MergeTree
+          - table: Loans
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: MergeTree
+          - table: LoanProducts
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: MergeTree
+          - table: LoanProductExtensions
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: MergeTree
+          - table: PaymentTransactions
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: ReplacingMergeTree
+            version_column: updatedAt
+          - table: Persons
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: ReplacingMergeTree
+            version_column: updatedAt
+          - table: PurchaseInfo
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: MergeTree
+          - table: pay_instructions
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: MergeTree
+          - table: product_credit_line_config
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: MergeTree
+          - table: Relatives
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: MergeTree
+            version_column: updatedAt
+          - table: Repayments
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: MergeTree
+            version_column: updatedAt
+          - table: WalletHistories
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: ReplacingMergeTree
+            version_column: updatedAt
+          - table: Works
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: MergeTree
+            version_column: updatedAt
+          - table: mpf_credits
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: MergeTree
+            version_column: updated_at
+          - table: mpf_merchant_payment_orders
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: MergeTree
+            version_column: updated_at
+          - table: mpf_statement_snapshots
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: ReplacingMergeTree
+            version_column: updated_at
+          - table: mpf_loan_interest_repay_snapshots
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: ReplacingMergeTree
+            version_column: updated_at
+          - table: send_mq_history
+            skip_decimal: true
+            auto_full_etl: true
+            clickhouse_engine: ReplacingMergeTree
+            version_column: updated_at
+          
   - db_type: postgres
     alias: postgres_db
     broker_type: kafka # current support redis and kafka
@@ -81,10 +213,10 @@ source_dbs:
 clickhouse:
   # shard hosts when cluster, will insert by random
   hosts:
-    - clickhouse:9000
+    - 10.63.0.3:9000
 #    - clickhouse:9021
   user: default
-  password: ''
+  password: 'Ad@sd119'
   cluster_name:  # enable cluster mode when not empty, and hosts must be more than one if enable.
   distributed_suffix: _all # distributed tables suffix, available in cluster
 kafka:
@@ -94,10 +226,10 @@ kafka:
 
 # enable this to send error report, comment or delete these if not.
 mail:
-  mailhost: smtp.gmail.com
-  fromaddr: long2ice@gmail.com
+  mailhost: smtp.vip.163.com
+  fromaddr: oriente@vip.163.com
   toaddrs:
-    - long2ice@gmail.com
-  user: long2ice@gmail.com
-  password: "123456"
+    - oriente@vip.163.com
+  user: oriente@vip.163.com
+  password: ""
   subject: "[synch] Error logging report"
