@@ -1,2 +1,2 @@
 # jerry_sync
-etl by clickhouse
+so easy when u etl by clickhouse 
