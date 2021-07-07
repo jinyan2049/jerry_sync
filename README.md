@@ -1,2 +1,2 @@
 # jerry_sync
-oriente
+I love clickhouse
