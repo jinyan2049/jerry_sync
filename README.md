@@ -83,4 +83,4 @@ sudo curl -L https://get.daocloud.io/docker/compose/releases/download/1.24.1/doc
 
 sudo chmod +x /usr/local/bin/docker-compose
 
-# so easy when u etl by clickhouse 
+# so easy when u etl by clickhouse !!!!
